@@ -67,12 +67,14 @@ public class CountryController extends AbstractController {
                                   @RequestParam("action") String action) {
         principalNull(principal);
 
+        Country entity = countryService.findById(countryId);
+
         if (result.hasErrors()) {
             return Paths.COUNTRY_EDIT;
         } else {
             if (action.equals("save")) {
-                Country country = countryService.editCountry(countryDto, countryId);
-                return redirectCountry(country);
+                Country edit = countryService.editCountry(entity, countryDto);
+                return redirectCountry(edit);
             } else {
                 return redirectCountry(countryId);
             }

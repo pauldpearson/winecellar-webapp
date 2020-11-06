@@ -87,15 +87,15 @@ public class CountryService extends AbstractService<Country> {
     }
 
     /**
-     * Helper service to find a Country by it's ID, convert it from the Dto object, and then save
+     * Edit a country
      *
-     * @param dto       CountryDto dto
-     * @param countryId Long countryId
-     * @return Country entity
+     * @param entity the entity
+     * @param dto    the dto
+     * @return a country entity
      */
     @Transactional
-    public Country editCountry(CountryDto dto, Long countryId) {
-        Country country = countryConverter.toEntity(this.findById(countryId), dto);
+    public Country editCountry(Country entity, CountryDto dto) {
+        Country country = countryConverter.toEntity(entity, dto);
         this.save(country);
         return country;
     }

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,17 +38,23 @@ public class RegionRestController {
     /**
      * Edit a region
      *
+     * @param regionId The id of the region
      * @param request  Description and weblink are the only fields that can be edited:
      *                 {@link RegionDto}
      *                 {@link info.mywinecellar.converter.RegionConverter}
-     * @param regionId The id of the region
      * @return MyWineCellar JSON envelope and the region
      */
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     @PutMapping("/{regionId}/edit")
-    public MyWineCellar regionEditPut(@RequestBody RegionDto request, @PathVariable Long regionId) {
-        Region region = regionService.editRegion(request, regionId);
-        log.info("Updated {} {} ", region.toString(), region.getName());
-        return new Builder().region(region).build();
+    public MyWineCellar regionEditPut(@PathVariable Long regionId, @RequestBody RegionDto request) {
+        Region region = regionService.findById(regionId);
+        if (region != null) {
+            Region edit = regionService.editRegion(region, request);
+            log.info("Updated {} {} ", edit.toString(), edit.getName());
+            return new Builder().region(edit).build();
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Region is null, check the id");
+        }
+
     }
 }

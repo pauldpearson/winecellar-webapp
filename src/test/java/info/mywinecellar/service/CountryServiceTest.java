@@ -91,7 +91,7 @@ class CountryServiceTest extends BaseUnitTest {
         countryDto.setDescription("edited description");
         countryDto.setWeblink("edited weblink");
 
-        Country result = countryService.editCountry(countryDto, us.getId());
+        Country result = countryService.editCountry(us, countryDto);
         assertNotNull(result);
         assertEquals(countryDto.getDescription(), result.getDescription());
         assertEquals(countryDto.getWeblink(), result.getWeblink());

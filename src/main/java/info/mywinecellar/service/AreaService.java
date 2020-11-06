@@ -17,9 +17,9 @@ import info.mywinecellar.model.Producer;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Area service
@@ -76,14 +76,13 @@ public class AreaService extends AbstractService<Area> {
     /**
      * Edit Area
      *
-     * @param dto    AreaDto dto
-     * @param areaId Long areaId
-     * @return Area entity
+     * @param entity the entity
+     * @param dto    the dto
+     * @return an area entity
      */
     @Transactional
-    public Area editArea(AreaDto dto, Long areaId) {
-        Area area = this.findById(areaId);
-        area = areaConverter.toEntity(area, dto);
+    public Area editArea(Area entity, AreaDto dto) {
+        Area area = areaConverter.toEntity(entity, dto);
         this.save(area);
         return area;
     }

@@ -78,13 +78,14 @@ public class AreaController extends AbstractController {
                                @PathVariable Long areaId,
                                @RequestParam("action") String action) {
         principalNull(principal);
+        Area area = areaService.findById(areaId);
 
         if (result.hasErrors()) {
             return Paths.AREA_EDIT;
         } else {
             if (action.equals("save")) {
-                Area area = areaService.editArea(areaDto, areaId);
-                return redirectArea(Session.getCountryId(), Session.getRegionId(), area);
+                Area edit = areaService.editArea(area, areaDto);
+                return redirectArea(Session.getCountryId(), Session.getRegionId(), edit);
             } else {
                 return redirectArea(Session.getCountryId(), Session.getRegionId(), areaId);
             }

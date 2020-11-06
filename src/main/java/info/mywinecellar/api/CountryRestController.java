@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,18 +38,23 @@ public class CountryRestController {
     /**
      * Edit a country
      *
+     * @param countryId The id of the country to edit
      * @param request   Description and weblink are the only fields that can be edited:
      *                  {@link CountryDto}
      *                  {@link info.mywinecellar.converter.CountryConverter}
-     * @param countryId The id of the country to edit
      * @return MyWineCellar JSON envelope and the country
      */
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     @PutMapping("/{countryId}/edit")
-    public MyWineCellar countryEditPut(@RequestBody CountryDto request, @PathVariable Long countryId) {
-        Country country = countryService.editCountry(request, countryId);
-        log.info("Updated {} {} ", country.toString(), country.getName());
-        return new Builder().country(country).build();
+    public MyWineCellar countryEditPut(@PathVariable Long countryId, @RequestBody CountryDto request) {
+        Country country = countryService.findById(countryId);
+        if (country != null) {
+            Country edit = countryService.editCountry(country, request);
+            log.info("Updated {} {} ", edit.toString(), edit.getName());
+            return new Builder().country(edit).build();
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Country is null, check the id");
+        }
     }
 
 }

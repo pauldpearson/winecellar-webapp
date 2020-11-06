@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,18 +62,24 @@ public class AreaRestController {
     /**
      * Edit an area
      *
+     * @param areaId  The id of the area to edit
      * @param request Description and weblink are the only fields that can be edited:
      *                {@link AreaDto}
      *                {@link info.mywinecellar.converter.AreaConverter}
-     * @param areaId  The id of the area to edit
      * @return MyWineCellar JSON envelope and the area
      */
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     @PutMapping("/edit")
-    public MyWineCellar areaEditPut(@RequestBody AreaDto request, @PathVariable Long areaId) {
-        Area area = areaService.editArea(request, areaId);
-        log.info("Updated {} {} ", area.toString(), area.getName());
-        return new Builder().area(area).build();
+    public MyWineCellar areaEditPut(@PathVariable Long areaId, @RequestBody AreaDto request) {
+        Area area = areaService.findById(areaId);
+        if (area != null) {
+            Area edit = areaService.editArea(area, request);
+            log.info("Updated {} {} ", edit.toString(), edit.getName());
+            return new Builder().area(edit).build();
+        } else {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Area is null, check the id");
+        }
+
     }
 
     /**

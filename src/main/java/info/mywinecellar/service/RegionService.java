@@ -66,15 +66,15 @@ public class RegionService extends AbstractService<Region> {
     }
 
     /**
-     * Helper service to find a Region by it's ID, convert from Dto object, then save
+     * Edit a region
      *
-     * @param dto      RegionDto dto
-     * @param regionId Long regionId
+     * @param entity Region entity
+     * @param dto    RegionDto dto
      * @return Region entity
      */
     @Transactional
-    public Region editRegion(RegionDto dto, Long regionId) {
-        Region region = regionConverter.toEntity(this.findById(regionId), dto);
+    public Region editRegion(Region entity, RegionDto dto) {
+        Region region = regionConverter.toEntity(entity, dto);
         this.save(region);
         return region;
     }

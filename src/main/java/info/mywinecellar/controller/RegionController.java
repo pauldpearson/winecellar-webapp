@@ -67,12 +67,13 @@ public class RegionController extends AbstractController {
                                         @PathVariable Long regionId,
                                         @RequestParam("action") String action) {
         principalNull(principal);
+        Region entity = regionService.findById(regionId);
 
         if (result.hasErrors()) {
             return Paths.REGION_EDIT;
         } else {
             if (action.equals("save")) {
-                Region region = regionService.editRegion(regionDto, regionId);
+                Region region = regionService.editRegion(entity, regionDto);
                 return redirectRegion(Session.getCountryId(), region);
             } else {
                 return redirectRegion(Session.getCountryId(), regionId);
